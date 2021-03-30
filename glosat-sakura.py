@@ -8,6 +8,7 @@
 # Dr Michael Taylor
 # https://patternizer.github.io
 # patternizer AT gmail DOT com
+# michael DOT a DOT taylor AT uea DOT ac DOT uk
 #-----------------------------------------------------------------------
 
 # Dataframe libraries:
@@ -90,13 +91,13 @@ if int(currentmn) < 10:
     currentmn = '0' + currentmn
 titletime = str(currentdy) + '/' + currentmn + '/' + currentyr
 
-#---------------
 #-----------------------------------------------------------------------------
 # SETTINGS
 #-----------------------------------------------------------------------------
 
 fontsize = 16
-use_anomalies = False
+use_anomalies = True
+use_loess = True
 station_code = '477590' # Kyoto City
 station_latlon = 'lon_135.7_lat_35.0'
 img = image.imread("IMAGES/sakura4.jpeg")
@@ -200,7 +201,7 @@ df_sakura['ts_sakura_Fi'] = ts_sakura_Fi
 df_sakura['ts_sakura_Fu'] = ts_sakura_Fu
 
 #-----------------------------------------------------------------------------
-# LOAD: Pages2K (Ed Hawkins)
+# LOAD: Pages2k (via Ed Hawkins with thanks): 
 #-----------------------------------------------------------------------------
 
 # 1945	0.014	0.006	-0.2553	0.2013	-0.0692	-0.0692	-0.3131	0.0901
@@ -254,13 +255,10 @@ if use_loess == True:
 # PLOT: GloSAT temperatures and Sakura (Cherry Blossom) timeseries on same xaxis
 #-----------------------------------------------------------------------------
 
-
 figstr = 'glosat-sakura.png'
-#titlestr = 'GloSAT temperatures at Kyoto and Sakura timeseries'
 titlestr = 'Phenological data for flowering dates of Prunus jamasakura in Kyoto City'
 
 fig,ax = plt.subplots(figsize=(15,10))
-
 plt.plot(df_sakura['t_sakura'],df_sakura['ts_sakura_Fu'], color='cyan', marker='o', linestyle='None', alpha=0.4, label='Prunus jamasakura (full flowering)')
 plt.plot(df_sakura['t_sakura'],df_sakura['ts_sakura_Fi'], color='red', marker='s', linestyle='None', alpha=0.4, label='Prunus jamasakura (first flowering)')
 plt.plot(l_x_Fu, l_y_Fu, color='cyan', linestyle='-', linewidth=5, alpha=1.0, label='LOESS fit: '+r'$\alpha$=0.5' + ', quadratic')
@@ -272,28 +270,21 @@ plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=aspect, alpha=
 ax.tick_params(labelsize=fontsize)
 ax.xaxis.grid(True, which='major')        
 ax.yaxis.grid(True, which='major')      
-#plt.ylim(40,140)  
+#plt.ylim(0,140)  
 leg = plt.legend(loc=2, ncol=1, fontsize=fontsize)
 leg.set_frame_on(False) # make it transparent
 ax.set_xlabel("Year A.D.", fontsize=fontsize)
 ax.set_ylabel("Day of the Year", fontsize=fontsize)    
-
 ax2 = ax.twinx()
 ax2.plot(df_pages2k['t_pages2k'], df_pages2k['ts_pages2k'], color='pink', marker='o', linestyle='-', alpha=0.4, label=r'Temperature anomaly (from 1991-1990) [$^{\circ}$C]')
 ax2.spines['right'].set_color('pink')
 ax2.tick_params(axis='y', color='pink', labelsize=fontsize)
 ax2.set_ylabel(r'Temperature anomaly (from 1961-1990) [$^{\circ}$C]', color='pink', fontsize=fontsize)    
 
-#if use_anomalies == True:
-#    plt.ylabel("Temperature anomaly, $\mathrm{\degree}C$", fontsize=fontsize)
-#else:
-#    plt.ylabel("Absolute temperature, $\mathrm{\degree}C$", fontsize=fontsize)    
-#plt.title(titlestr, fontsize=fontsize)
-
 datastr1 = r'$\bf{Dataset 1}$' + ': Aono and Kazui, 2008; Aono and Saito, 2010; Aono, 2012'        
 sourcestr1 = r'$\bf{Source 1}$' + ': http://atmenv.envi.osakafu-u.ac.jp/aono/kyophenotemp4/'        
-datastr2 = r'$\bf{Dataset 2}$' + ': PAGES2k (& HadCRUT4.6.0.0 for 2001-2017): courtesy of Ed Hawkins, University of Reading)'        
-sourcestr2 = r'$\bf{Source 2}$' + ': http://www.climate-lab-book.ac.uk/2020/2019-years/'        
+datastr2 = r'$\bf{Dataset 2}$' + ': PAGES2k Corsortium (+ HadCRUT4.6.0.0 for 2001-2017)'        
+sourcestr2 = r'$\bf{Source 2}$' + ': https://doi.org/10.6084/m9.figshare.8143094.v3'        
 authorstr = r'$\bf{Graphic}$' + ': Michael Taylor, CRU/UEA' + ' -- ' + titletime
 
 fig.suptitle(titlestr, fontsize=24, color='white', fontweight='bold')        
