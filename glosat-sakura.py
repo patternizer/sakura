@@ -207,7 +207,9 @@ df_sakura['ts_sakura_Fu'] = ts_sakura_Fu
 # 1945	0.014	0.006	-0.2553	0.2013	-0.0692	-0.0692	-0.3131	0.0901
 # Year CE | raw instrumental target data | reconstruction ensemble 50th | 2.5th | 97.5th percentiles | 31-year butterworth filtered instrumental target data | 31-year butterworth filtered reconstruction 50th | 2.5th | 97.5th percentiles
 
-pages2k_file = 'DATA/Full_ensemble_median_and 95pct_range.txt'
+#pages2k_file = 'DATA/Full_ensemble_median_and 95pct_range.txt'
+#pages2k_file = 'DATA/Full_ensemble_median_and 95pct_range_HadCRUT5.txt'
+pages2k_file = 'DATA/Full_ensemble_median_and 95pct_range_CRUTEM5.txt'
 nheader = 5
 f = open(pages2k_file)
 lines = f.readlines()
@@ -259,10 +261,10 @@ figstr = 'glosat-sakura.png'
 titlestr = 'Phenological data for flowering dates of Prunus jamasakura in Kyoto City'
 
 fig,ax = plt.subplots(figsize=(15,10))
-plt.plot(df_sakura['t_sakura'],df_sakura['ts_sakura_Fu'], color='cyan', marker='o', linestyle='None', alpha=0.4, label='Prunus jamasakura (full flowering)')
 plt.plot(df_sakura['t_sakura'],df_sakura['ts_sakura_Fi'], color='red', marker='s', linestyle='None', alpha=0.4, label='Prunus jamasakura (first flowering)')
-plt.plot(l_x_Fu, l_y_Fu, color='cyan', linestyle='-', linewidth=5, alpha=1.0, label='LOESS fit: '+r'$\alpha$=0.5' + ', quadratic')
+plt.plot(df_sakura['t_sakura'],df_sakura['ts_sakura_Fu'], color='cyan', marker='o', linestyle='None', alpha=0.4, label='Prunus jamasakura (full flowering)')
 plt.plot(l_x_Fi, l_y_Fi, color='red', linestyle='-', linewidth=5, alpha=1.0, label='LOESS fit: '+r'$\alpha$=0.1' + ', linear')
+plt.plot(l_x_Fu, l_y_Fu, color='cyan', linestyle='-', linewidth=5, alpha=1.0, label='LOESS fit: '+r'$\alpha$=0.5' + ', quadratic')
 xmin, xmax = ax.get_xlim()
 ymin, ymax = ax.get_ylim()
 aspect = img.shape[0] / img.shape[1] * (xmax - xmin)/(ymax - ymin)
@@ -283,7 +285,7 @@ ax2.set_ylabel(r'Temperature anomaly (from 1961-1990) [$^{\circ}$C]', color='pin
 
 datastr1 = r'$\bf{Dataset 1}$' + ': Aono and Kazui, 2008; Aono and Saito, 2010; Aono, 2012'        
 sourcestr1 = r'$\bf{Source 1}$' + ': http://atmenv.envi.osakafu-u.ac.jp/aono/kyophenotemp4/'        
-datastr2 = r'$\bf{Dataset 2}$' + ': PAGES2k Corsortium (+ HadCRUT4.6.0.0 for 2001-2017)'        
+datastr2 = r'$\bf{Dataset 2}$' + ': PAGES2k Corsortium (+ CRUTEM5.0.1 for 2001-2020)'        
 sourcestr2 = r'$\bf{Source 2}$' + ': https://doi.org/10.6084/m9.figshare.8143094.v3'        
 authorstr = r'$\bf{Graphic}$' + ': Michael Taylor, CRU/UEA' + ' -- ' + titletime
 
