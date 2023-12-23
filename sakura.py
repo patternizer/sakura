@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 #-----------------------------------------------------------------------
-# PROGRAM: glosat-sakura.py
+# PROGRAM: sakura.py
 #-----------------------------------------------------------------------
 # Version 0.1
 # 28 March, 2021
 # Dr Michael Taylor
 # https://patternizer.github.io
-# patternizer AT gmail DOT com
 # michael DOT a DOT taylor AT uea DOT ac DOT uk
 #-----------------------------------------------------------------------
 
@@ -16,8 +15,15 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+# Maths libraries:
+import scipy
+from scipy.interpolate import griddata
+from scipy import spatial
+from math import radians, cos, sin, asin, sqrt
+
 # Stats libraries:
-from loess import loess
+import statsmodels.api as sm
+#from loess import loess
 
 # Datetime libraries:
 from datetime import datetime
@@ -36,11 +42,6 @@ register_matplotlib_converters()
 import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 import matplotlib.ticker as mticker
-
-# Maths libraries:
-from scipy.interpolate import griddata
-from scipy import spatial
-from math import radians, cos, sin, asin, sqrt
 
 # OS libraries:
 import os, sys
@@ -245,13 +246,28 @@ if use_loess == True:
 
     df_sakura_nonan_Fu = df_sakura.dropna( how='any', subset=['ts_sakura_Fu'])
     df_sakura_nonan_Fi = df_sakura[df_sakura['t_sakura'].index>1000].dropna( how='any', subset=['ts_sakura_Fi'])
-    regsDF_Fu, evalDF_Fu = loess(df_sakura_nonan_Fu['t_sakura'].index, df_sakura_nonan_Fu['ts_sakura_Fu'], alpha=.5, poly_degree=2)
-    regsDF_Fi, evalDF_Fi = loess(df_sakura_nonan_Fi['t_sakura'].index, df_sakura_nonan_Fi['ts_sakura_Fi'], alpha=.9, poly_degree=1)
-    #l_x  = evalDF['v'].values
-    l_x_Fu  = df_sakura_nonan_Fu['t_sakura']
-    l_x_Fi  = df_sakura_nonan_Fi['t_sakura']
-    l_y_Fu  = evalDF_Fu['g'].values[1:]
-    l_y_Fi  = evalDF_Fi['g'].values[1:]
+#    regsDF_Fu, evalDF_Fu = loess(df_sakura_nonan_Fu['t_sakura'].index, df_sakura_nonan_Fu['ts_sakura_Fu'], alpha=.5, poly_degree=2)
+#    regsDF_Fi, evalDF_Fi = loess(df_sakura_nonan_Fi['t_sakura'].index, df_sakura_nonan_Fi['ts_sakura_Fi'], alpha=.9, poly_degree=1)
+#    l_x_Fu  = df_sakura_nonan_Fu['t_sakura']
+#    l_x_Fi  = df_sakura_nonan_Fi['t_sakura']
+#    l_y_Fu  = evalDF_Fu['g'].values[1:]
+#    l_y_Fi  = evalDF_Fi['g'].values[1:]
+
+    delta = 0.01 * len(df_sakura_nonan_Fu['t_sakura'])
+    lowess_frac = 0.3
+    iterations = 3
+    lowess = sm.nonparametric.lowess(df_sakura_nonan_Fu['ts_sakura_Fu'], df_sakura_nonan_Fu['t_sakura'].index, delta=delta, frac=lowess_frac, it=iterations)
+#    l_x_Fu = lowess[:,0];
+    l_x_Fu = df_sakura_nonan_Fu['t_sakura'] 
+    l_y_Fu = lowess[:,1]
+
+    delta = 0.01 * len(df_sakura_nonan_Fu['t_sakura'])
+    lowess_frac = 0.9
+    iterations = 3
+    lowess = sm.nonparametric.lowess(df_sakura_nonan_Fi['ts_sakura_Fi'], df_sakura_nonan_Fi['t_sakura'].index, delta=delta, frac=lowess_frac, it=iterations)
+#    l_x_Fi = lowess[:,0]; 
+    l_x_Fi = df_sakura_nonan_Fi['t_sakura'] 
+    l_y_Fi = lowess[:,1]
 
 #-----------------------------------------------------------------------------
 # PLOT: GloSAT temperatures and Sakura (Cherry Blossom) timeseries on same xaxis
